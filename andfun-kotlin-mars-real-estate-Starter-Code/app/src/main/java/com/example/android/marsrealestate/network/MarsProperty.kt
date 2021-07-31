@@ -17,4 +17,19 @@
 
 package com.example.android.marsrealestate.network
 
-class MarsProperty()
+import com.squareup.moshi.Json
+
+/*
+Properties found in the json
+we can use annotations to use different names in the JSON using MOSHI
+ */
+data class MarsProperty(
+    val id: String,
+    //moshi
+    @Json(name="img_src") val img_src: String,
+    val type: String,
+    val price: Double)
+
+
+
+

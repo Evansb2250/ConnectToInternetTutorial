@@ -17,29 +17,42 @@
 
 package com.example.android.marsrealestate.network
 
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 
 private const val BASE_URL = "https://mars.udacity.com/"
 
+
+//We need to create a Moshi object with the KotlinJsonAdapaterFactory
+//Moshi makes it easy to parse JSON into Java objects
+private val moshi = Moshi.Builder()
+    //add kotlinJsonAdapter Factory
+    .add(KotlinJsonAdapterFactory())
+    //build moshi object
+    .build()
+
 //Use Retrofit Builder with ScalarsConverterFactory and BASE_URL
+//This line of code makes it where retrofit knows how to turn the Json Response to a string
 private val retrofit = Retrofit.Builder()
-    .addConverterFactory(ScalarsConverterFactory.create())
+    .addConverterFactory(MoshiConverterFactory.create(moshi)) //Todo findout why you need to use a Moshi ConverterFactory
     .baseUrl(BASE_URL)
     .build()
 
-// Implements the MarsApiService interface with @GET get Properties returning a String
+// Implements the MarsApiService interface with @GET get Properties returning a list of MarsProperties
 interface MarsApiService {
     @GET("realestate")
     fun getProperties():
-            Call<String>
+            List<MarsProperty>
 }
 
 //Create the MarsApi object using Retrofit to implement the MarsApiService
-object MarsApi{
-    val retrofitService : MarsApiService by lazy {
+object MarsApi {
+    val retrofitService: MarsApiService by lazy {
         retrofit.create(MarsApiService::class.java)
     }
 }
